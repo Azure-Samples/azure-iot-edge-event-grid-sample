@@ -33,9 +33,8 @@ Azure function is used to demonstrate how to write an event handler. The handler
 ## How-to: Install extension and deploy
 
 1. Open the top folder in VSCode (need Azure IoT Edge Extension)
-2. update .env.template and fill in the values (REGISTRY,USERNAME,PASSWORD,EVENTPASSWORD,EVENTUSERNAME)
-3. rename .env.template to .env
-4. Now, you can build, push, deploy the solution
+2. create or open a .env file and fill in the values (REGISTRY,USERNAME,PASSWORD)
+3. Now, you can build, push, deploy the solution
 
 ## Contributing
 
