@@ -1,0 +1,144 @@
+{
+    "modulesContent": {
+        "$edgeAgent": {
+            "properties.desired": {
+                "modules": {
+                    "eventgridmodule": {
+                        "settings": {
+                            "image": "mcr.microsoft.com/azure-event-grid/iotedge:1.0",
+                            "createOptions": {
+                                "Env": [
+                                  "inbound:serverAuth:tlsPolicy=disabled",
+                                  "inbound:clientAuth:clientCert:enabled=false",
+                                  "inbound:clientAuth:sasKeys:enabled=false",
+                                  "outbound:webhook:httpsOnly=false"
+                                ],
+                                "HostConfig": {
+                                  "PortBindings": {
+                                    "5888/tcp": [
+                                      {
+                                        "HostPort": "5888"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                          },
+                        "type": "docker",
+                        "version": "1.0",
+                        "status": "running",
+                        "restartPolicy": "always"
+                    },
+                    "egcustompublisher": {
+                        "settings": {
+                            "image": "${MODULES.publisher}",
+                            "createOptions": {}
+                        },
+                        "type": "docker",
+                        "version": "1.0",
+                        "status": "running",
+                        "restartPolicy": "always"
+                    },
+                    "egcustomsubscriber": {
+                        "settings": {
+                            "image": "${MODULES.subscriber}",
+                            "createOptions": {
+                                "HostConfig": {
+                                    "PortBindings": {
+                                        "80/tcp": [
+                                            {
+                                                "HostPort": "8080"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "type": "docker",
+                        "version": "1.0",
+                        "status": "running",
+                        "restartPolicy": "always"
+                    }
+                },
+                "runtime": {
+                    "settings": {
+                        "minDockerVersion": "v1.25",
+                        "registryCredentials": {
+                            "userregistry": {
+                                "address": "${REGISTRY}",
+                                "password": "${PASSWORD}",
+                                "username": "${USERNAME}"
+                            }
+                        }
+                    },
+                    "type": "docker"
+                },
+                "schemaVersion": "1.0",
+                "systemModules": {
+                    "edgeAgent": {
+                        "settings": {
+                            "image": "mcr.microsoft.com/azureiotedge-agent:1.0",
+                            "createOptions": "{}"
+                        },
+                        "type": "docker"
+                    },
+                    "edgeHub": {
+                        "settings": {
+                            "image": "mcr.microsoft.com/azureiotedge-hub:1.0",
+                            "createOptions": "{\"HostConfig\":{\"PortBindings\":{\"5671/tcp\":[{\"HostPort\":\"5671\"}],\"8883/tcp\":[{\"HostPort\":\"8883\"}],\"443/tcp\":[{\"HostPort\":\"443\"}]}}}"
+                        },
+                        "type": "docker",
+                        "status": "running",
+                        "restartPolicy": "always"
+                    }
+                }
+            }
+        },
+        "$edgeHub": {
+            "properties.desired": {
+                "routes": {
+                    "ToIoTHub": "FROM /messages/modules/* INTO $upstream"
+                },
+                "schemaVersion": "1.0",
+                "storeAndForwardConfiguration": {
+                    "timeToLiveSecs": 7200
+                }
+            }
+        },
+        "eventgridmodule": {
+            "properties.desired": {
+                "topics": {
+                  "quickstarttopic": {
+                    "inputSchema": "customEventSchema"
+                  }
+                },
+                "eventSubscriptions": {
+                  "quickstartwebhooksubscription": {
+                    "topic": "quickstarttopic",
+                    "destination": {
+                      "endpointType": "WebHook",
+                      "properties": {
+                        "endpointUrl": "http://egcustomsubscriber:80/api/subscriber"
+                      }
+                    }
+                  },
+                  "quickstartedgehubsubscription": {
+                    "topic": "quickstarttopic",
+                    "destination": {
+                      "endpointType": "EdgeHub",
+                      "properties": {
+                        "outputName": "quickstartedgehubsubscription"
+                      }
+                    }
+                  }
+                }
+              }
+        },
+        "egcustompublisher": {
+            "properties.desired": {}
+        },
+        "egcustomsubscriber": {
+            "properties.desired": {}
+        }
+    }
+}

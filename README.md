@@ -4,50 +4,38 @@ languages:
 - csharp
 products:
 - dotnet
-description: "Add 150 character max description"
+description: "A sample project to show Event Grid module on Azure IoT Edge"
 urlFragment: "update-this-to-unique-url-stub"
 ---
 
-# Official Microsoft Sample
+# Overview
 
-<!-- 
-Guidelines on README format: https://review.docs.microsoft.com/help/onboard/admin/samples/concepts/readme-template?branch=master
+This quick start demonstrates how to use publish/subscriber messaging pattern on edge using Event Grid. 3 modules are deployed as part of this quick start.
 
-Guidance on onboarding samples to docs.microsoft.com/samples: https://review.docs.microsoft.com/help/onboard/admin/samples/process/onboarding?branch=master
+1. Event Grid module - enables publish/subscriber messaging pattern on edge
+1. Publisher module  - responsible for publishing events
+1. Subscriber module - responsible for receiving/handling events
 
-Taxonomies for products and languages: https://review.docs.microsoft.com/new-hope/information-architecture/metadata/taxonomies?branch=master
--->
+Additionally with an Event Grid subscription to 'edgeHub' we can forward events to IoTHub via routes. Refer to Deployment template for details.
 
-Give a short description for your sample here. What does it do and why is it important?
+## Event Grid module
 
-## Contents
+The module's device twin is used to create the topic and subscription used by the publisher and subscriber module. For simplicity, listens on HTTP and forwards to HTTP endpoint (Azure). Capable to restricting to only HTTPs  on both incoming and outgoing. The URL depends on the module name. If deploying with a different name make sure to update the publisher module.
 
-Outline the file contents of the repository. It helps users navigate the codebase, build configuration and any related assets.
+## Publisher module
 
-| File/folder       | Description                                |
-|-------------------|--------------------------------------------|
-| `src`             | Sample source code.                        |
-| `.gitignore`      | Define what to ignore at commit time.      |
-| `CHANGELOG.md`    | List of changes to the sample.             |
-| `CONTRIBUTING.md` | Guidelines for contributing to the sample. |
-| `README.md`       | This README file.                          |
-| `LICENSE`         | The license for the sample.                |
+Responsible for publishing events to a topic with name 'quickstarttopic'. The topic is created in Event Grid module's device twin. Assumes Event Grid module is deployed with name 'eventgridmodule'. If done differently make sure to update the code appropriately.
 
-## Prerequisites
+## Subscriber module
 
-Outline the required components and tools that a user might need to have on their machine in order to run the sample. This can be anything from frameworks, SDKs, OS versions or IDE releases.
+Azure function is used to demonstrate how to write an event handler. The handler URL is registered as part of subscription creation. Any changes to the function URL needs to modify Event Grid device twin configuration as well.
 
-## Setup
+## How-to: Install extension and deploy
 
-Explain how to prepare the sample once the user clones or downloads the repository. The section should outline every step necessary to install dependencies and set up any settings (for example, API keys and output folders).
-
-## Runnning the sample
-
-Outline step-by-step instructions to execute the sample and see its output. Include steps for executing the sample from the IDE, starting specific services in the Azure portal or anything related to the overall launch of the code.
-
-## Key concepts
-
-Provide users with more context on the tools and services used in the sample. Explain some of the code that is being used and how services interact with each other.
+1. Open the top folder in VSCode (need Azure IoT Edge Extension)
+2. update .env.template and fill in the values (REGISTRY,USERNAME,PASSWORD,EVENTPASSWORD,EVENTUSERNAME)
+3. rename .env.template to .env
+4. Now, you can build, push, deploy the solution
 
 ## Contributing
 
