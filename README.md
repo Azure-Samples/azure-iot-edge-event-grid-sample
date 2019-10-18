@@ -5,10 +5,10 @@ languages:
 products:
 - dotnet
 description: "A sample project to show Event Grid module on Azure IoT Edge"
-urlFragment: "update-this-to-unique-url-stub"
+urlFragment: "using-event-grid-publish"
 ---
 
-# Overview
+# Use publish/subscriber messaging pattern on edge using Event Grid
 
 This quick start demonstrates how to use publish/subscriber messaging pattern on edge using Event Grid. 3 modules are deployed as part of this quick start.
 
